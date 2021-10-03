@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 
-import Slider, { CustomArrowProps, Settings } from "react-slick";
+import Slider, { Settings } from "react-slick";
 import {
 	CircularProgress,
 	Box,
@@ -9,6 +9,7 @@ import {
 	AlertTitle,
 	AlertDescription,
 	Button,
+	useMediaQuery,
 } from "@chakra-ui/react";
 import { RepeatIcon } from "@chakra-ui/icons";
 
@@ -16,39 +17,13 @@ import { Card } from "./card";
 import { fetchMovies } from "./query";
 import { queryClient } from "..";
 
-function NextArrow({
-	className,
-	style,
-	onClick,
-}: CustomArrowProps): JSX.Element {
-	return (
-		<button
-			className={className}
-			style={{ ...style, display: "block" }}
-			onClick={onClick}
-		></button>
-	);
-}
-
-function PrevArrow({
-	className,
-	style,
-	onClick,
-}: CustomArrowProps): JSX.Element {
-	return (
-		<button
-			className={className}
-			style={{ ...style, display: "block " }}
-			onClick={onClick}
-		></button>
-	);
-}
-
 export const Carousel = () => {
 	const { data, isLoading, isError, error } = useQuery(
 		"movieData",
 		fetchMovies
 	);
+	const [isLessThan480] = useMediaQuery("(max-width: 480px)");
+
 	const handleClick = async () => {
 		console.log("click");
 		await queryClient.refetchQueries(["movieData"], { active: true });
@@ -60,8 +35,8 @@ export const Carousel = () => {
 		slidesToShow: 4,
 		slidesToScroll: 1,
 		initialSlide: 0,
-		nextArrow: <NextArrow />,
-		prevArrow: <PrevArrow />,
+		lazyLoad: "progressive",
+		vertical: isLessThan480,
 		responsive: [
 			{
 				breakpoint: 1600,
@@ -96,7 +71,7 @@ export const Carousel = () => {
 		autoplay: true,
 		autoplaySpeed: 2000,
 		cssEase: "linear",
-		rtl: true,
+		rtl: !isLessThan480,
 	};
 	fetchMovies();
 	if (isLoading) {
@@ -140,7 +115,7 @@ export const Carousel = () => {
 			<Slider {...settings}>
 				{data &&
 					data.map(movie => (
-						<Box mx="5" key={movie.id}>
+						<Box mx={{ md: "5" }} my="5" key={movie.id}>
 							<Card {...movie} />
 						</Box>
 					))}

@@ -36,7 +36,7 @@ export const Card = (props: Types.Movie): JSX.Element => {
 				/>
 			</ImageContainer>
 
-			<Box p="6" bg="white">
+			<Box p="6" bg="white" minH="210px">
 				<Box d="flex" alignItems="baseline">
 					{props.adult && (
 						<Badge borderRadius="full" px="2" colorScheme="red">
